@@ -19,6 +19,9 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.SettingsClient;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.net.URISyntaxException;
 
 import io.socket.client.IO;
@@ -43,7 +46,8 @@ public class ConnectedActivity extends AppCompatActivity {
     final int PERM_COARSE_LOC = 101;
 
     int port = 9696;
-    final String serverName = "http://aws.koumakan.work";
+//    final String serverName = "http://aws.koumakan.work";
+    final String serverName = "http://192.168.1.72";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,7 +65,7 @@ public class ConnectedActivity extends AppCompatActivity {
         try {
             socket = IO.socket(serverNamePort);
             socket.connect();
-
+            Log.d("is connect", "isConnected? " + socket.connected());
         } catch (URISyntaxException e) {
             Log.e("error_tag", "failed connect");
             e.printStackTrace();
@@ -95,7 +99,7 @@ public class ConnectedActivity extends AppCompatActivity {
         // Create the location request to start receiving updates
         mLocationRequest = new LocationRequest();
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-        mLocationRequest.setInterval(10000);
+        mLocationRequest.setInterval(5000);
         mLocationRequest.setFastestInterval(2000);
 
         // Create LocationSettingsRequest object using location request
@@ -123,12 +127,22 @@ public class ConnectedActivity extends AppCompatActivity {
             },
             Looper.myLooper());
         }
-
     }
 
     private void onLocationChanged(Location lastLocation) {
         System.out.println("onlocationChanged called");
+        double lng = lastLocation.getLongitude();
+        double lat = lastLocation.getLatitude();
         Log.d("location_changed", "Location: " + lastLocation.getLatitude() + " : " + lastLocation.getLongitude());
+        // Make JSON object
+        JSONObject data = new JSONObject();
+        try {
+            data.put("lng", lng);
+            data.put("lat", lat);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        ConnectedActivity.this.socket.emit("locationdata", data);
     }
 
     @Override
