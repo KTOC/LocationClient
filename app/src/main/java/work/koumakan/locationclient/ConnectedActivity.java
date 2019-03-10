@@ -43,7 +43,7 @@ public class ConnectedActivity extends AppCompatActivity {
     final int PERM_COARSE_LOC = 101;
 
     int port = 9696;
-    final String serverName = "http://192.168.1.72";
+    final String serverName = "http://aws.koumakan.work";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -112,7 +112,18 @@ public class ConnectedActivity extends AppCompatActivity {
             System.out.println("permission failed");
             // TODO: Consider calling
             ActivityCompat.requestPermissions(ConnectedActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, PERM_FINE_LOC);
+        } else {
+            // Permissions already set
+            getFusedLocationProviderClient(this).requestLocationUpdates(mLocationRequest, new LocationCallback() {
+                @Override
+                public void onLocationResult(LocationResult locationResult) {
+                    // do work here
+                    onLocationChanged(locationResult.getLastLocation());
+                }
+            },
+            Looper.myLooper());
         }
+
     }
 
     private void onLocationChanged(Location lastLocation) {
