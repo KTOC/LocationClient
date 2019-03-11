@@ -11,6 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -46,7 +47,7 @@ public class ConnectedActivity extends AppCompatActivity {
     final int PERM_COARSE_LOC = 101;
 
     int port = 9696;
-//    final String serverName = "http://aws.koumakan.work";
+    //    final String serverName = "http://aws.koumakan.work";
     final String serverName = "http://192.168.1.72";
 
     @Override
@@ -62,6 +63,10 @@ public class ConnectedActivity extends AppCompatActivity {
         username = (String) getIntent().getExtras().getString(MainActivity.USERNAME);
         String serverNamePort = serverName + ":" + port;
         System.out.println("connecting to: " + serverNamePort);
+
+        TextView user_banner = (TextView) findViewById(R.id.connected_user);
+        user_banner.setText(username);
+
         try {
             socket = IO.socket(serverNamePort);
             socket.connect();
@@ -78,8 +83,8 @@ public class ConnectedActivity extends AppCompatActivity {
                 if (ConnectedActivity.this.socket.connected()) {
 //                    ConnectedActivity.this.socket.emit("disconnect"); //this doesn't work
                     socket.disconnect();
-                    finish();
                 }
+                finish();
             }
         });
         startSendingBtn.setOnClickListener(new View.OnClickListener() {

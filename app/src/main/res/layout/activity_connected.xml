@@ -9,7 +9,8 @@
         android:layout_height="100dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:layout_marginTop="133dp" />
+        android:layout_marginTop="133dp"
+        android:textSize="100sp"/>
 
     <Button
         android:id="@+id/disconnect"
@@ -21,7 +22,7 @@
         android:layout_marginStart="194dp"
         android:layout_marginTop="7dp"
         android:layout_marginEnd="0dp"
-        android:text="Disconnect from Server" />
+        android:text="@string/disconnect_label" />
 
     <Button
         android:id="@+id/startsendlocation"
@@ -31,5 +32,5 @@
         android:layout_alignParentStart="true"
         android:layout_marginStart="0dp"
         android:layout_marginTop="7dp"
-        android:text="Start sending location data" />
+        android:text="@string/start_transfer" />
 </RelativeLayout>
