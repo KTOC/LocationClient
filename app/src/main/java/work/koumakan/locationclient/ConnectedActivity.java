@@ -11,13 +11,16 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.SettingsClient;
+import com.google.android.gms.tasks.Task;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -40,14 +43,18 @@ public class ConnectedActivity extends AppCompatActivity {
 
     // Location
     LocationRequest mLocationRequest;
+    FusedLocationProviderClient locationProviderClient;
+    LocationCallback locationCallBack;
 
     // Permission codes
     final int PERM_FINE_LOC = 100;
     final int PERM_COARSE_LOC = 101;
 
-    int port = 9696;
-//    final String serverName = "http://aws.koumakan.work";
-    final String serverName = "http://192.168.1.72";
+//    int port = 9696;
+    String serverName;
+    String port;
+//    String serverName = "http://aws.koumakan.work";
+//    final String serverName = "http://192.168.1.72";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,14 +67,19 @@ public class ConnectedActivity extends AppCompatActivity {
 
         // get username
         username = (String) getIntent().getExtras().getString(MainActivity.USERNAME);
+        port = (String) getIntent().getExtras().getString(MainActivity.PORT);
+        serverName = (String) getIntent().getExtras().getString(MainActivity.ADDR);
+
         String serverNamePort = serverName + ":" + port;
-        System.out.println("connecting to: " + serverNamePort);
+
+        Toast.makeText(this, "Connecting to : " + serverNamePort, Toast.LENGTH_SHORT).show();
+        System.out.println(serverNamePort);
         try {
             socket = IO.socket(serverNamePort);
             socket.connect();
-            Log.d("is connect", "isConnected? " + socket.connected());
+            System.out.println("Success Connected");
         } catch (URISyntaxException e) {
-            Log.e("error_tag", "failed connect");
+            System.out.println("Failed connect");
             e.printStackTrace();
         }
 
@@ -78,6 +90,7 @@ public class ConnectedActivity extends AppCompatActivity {
                 if (ConnectedActivity.this.socket.connected()) {
 //                    ConnectedActivity.this.socket.emit("disconnect"); //this doesn't work
                     socket.disconnect();
+                    stopLocationUpdates();
                     finish();
                 }
             }
@@ -90,6 +103,8 @@ public class ConnectedActivity extends AppCompatActivity {
                     ConnectedActivity.this.socket.emit("userlogin", username, "fakepwd");
                     // Setup interval here
                     ConnectedActivity.this.startLocationUpdates();
+                } else {
+                    System.out.println("Not connected");
                 }
             }
         });
@@ -118,14 +133,15 @@ public class ConnectedActivity extends AppCompatActivity {
             ActivityCompat.requestPermissions(ConnectedActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, PERM_FINE_LOC);
         } else {
             // Permissions already set
-            getFusedLocationProviderClient(this).requestLocationUpdates(mLocationRequest, new LocationCallback() {
+            locationProviderClient = getFusedLocationProviderClient(this);
+            locationCallBack = new LocationCallback() {
                 @Override
                 public void onLocationResult(LocationResult locationResult) {
                     // do work here
                     onLocationChanged(locationResult.getLastLocation());
                 }
-            },
-            Looper.myLooper());
+            };
+            locationProviderClient.requestLocationUpdates(mLocationRequest, locationCallBack, Looper.myLooper());
         }
     }
 
@@ -142,12 +158,31 @@ public class ConnectedActivity extends AppCompatActivity {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        ConnectedActivity.this.socket.emit("locationdata", data);
+        if (ConnectedActivity.this.socket.connected()) {
+            ConnectedActivity.this.socket.emit("locationdata", data);
+        }
+    }
+
+    public void stopLocationUpdates() {
+        if (locationProviderClient != null) {
+            try {
+                final Task<Void> voidTask = locationProviderClient.removeLocationUpdates(locationCallBack);
+                if (voidTask.isSuccessful()) {
+                    Log.d("LOC","StopLocation updates successful! ");
+                } else {
+                    Log.d("LOC","StopLocation updates unsuccessful! " + voidTask.toString());
+                }
+            }
+            catch (SecurityException exp) {
+                Log.d("LOC", " Security exception while removeLocationUpdates");
+            }
+        }
     }
 
     @Override
     public void onBackPressed() {
         socket.disconnect();
+        stopLocationUpdates();
         finish();
     }
 
