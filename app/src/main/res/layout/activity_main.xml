@@ -1,53 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    android:layout_height="wrap_content">
+
+    <include layout="@layout/toolbar_main" android:id="@+id/toolbar" />
 
     <EditText
         android:id="@+id/username"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
         android:layout_marginStart="0dp"
         android:layout_marginTop="69dp"
-        android:hint="Enter username"
-        android:textSize="30dp" />
+        android:hint="@string/enter_username" />
 
     <EditText
         android:id="@+id/addr"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/username"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
         android:layout_marginStart="0dp"
-        android:layout_marginTop="141dp"
-        android:hint="Address"
-        android:textSize="30dp" />
+        android:hint="@string/enter_address"
+        />
 
     <EditText
         android:id="@+id/port"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/addr"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
         android:layout_marginStart="0dp"
-        android:layout_marginTop="211dp"
-        android:hint="Port"
-        android:textSize="30dp" />
+        android:hint="@string/enter_port"/>
 
     <Button
         android:id="@+id/connect"
+        android:text="@string/connect_to_server"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/port"
-        android:layout_alignParentStart="true"
         android:layout_marginStart="0dp"
-        android:layout_marginTop="36dp"
-        android:text="Connect to Server" />
+        android:layout_marginTop="36dp" />
 
-</RelativeLayout>
+</LinearLayout>

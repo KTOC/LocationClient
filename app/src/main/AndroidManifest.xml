@@ -19,7 +19,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ConnectedActivity"/>
+        <activity
+            android:name=".ConnectedActivity"
+            android:label="@string/connection_label"
+            android:parentActivityName=".MainActivity" />
     </application>
 
 </manifest>

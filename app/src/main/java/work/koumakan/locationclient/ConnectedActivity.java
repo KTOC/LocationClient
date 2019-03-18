@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
+import android.widget.TextView;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
@@ -50,7 +51,6 @@ public class ConnectedActivity extends AppCompatActivity {
     final int PERM_FINE_LOC = 100;
     final int PERM_COARSE_LOC = 101;
 
-//    int port = 9696;
     String serverName;
     String port;
 //    String serverName = "http://aws.koumakan.work";
@@ -73,7 +73,10 @@ public class ConnectedActivity extends AppCompatActivity {
         String serverNamePort = serverName + ":" + port;
 
         Toast.makeText(this, "Connecting to : " + serverNamePort, Toast.LENGTH_SHORT).show();
-        System.out.println(serverNamePort);
+
+        TextView user_banner = (TextView) findViewById(R.id.connected_user);
+        user_banner.setText(username);
+
         try {
             socket = IO.socket(serverNamePort);
             socket.connect();
@@ -88,8 +91,10 @@ public class ConnectedActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (ConnectedActivity.this.socket.connected()) {
-//                    ConnectedActivity.this.socket.emit("disconnect"); //this doesn't work
                     socket.disconnect();
+                    stopLocationUpdates();
+                    finish();
+                } else {
                     stopLocationUpdates();
                     finish();
                 }
