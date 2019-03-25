@@ -30,6 +30,7 @@ import java.net.URISyntaxException;
 
 import io.socket.client.IO;
 import io.socket.client.Socket;
+import io.socket.emitter.Emitter;
 
 import static com.google.android.gms.location.LocationServices.getFusedLocationProviderClient;
 
@@ -53,6 +54,7 @@ public class ConnectedActivity extends AppCompatActivity {
 
     String serverName;
     String port;
+
 //    String serverName = "http://aws.koumakan.work";
 //    final String serverName = "http://192.168.1.72";
 
@@ -79,10 +81,11 @@ public class ConnectedActivity extends AppCompatActivity {
 
         try {
             socket = IO.socket(serverNamePort);
+            // Add event listener for socket
+            socket.on(Socket.EVENT_CONNECT, onConnect).on(Socket.EVENT_DISCONNECT, onDisconnect).on(Socket.EVENT_CONNECT_ERROR, onConnectError);
             socket.connect();
-            System.out.println("Success Connected");
         } catch (URISyntaxException e) {
-            System.out.println("Failed connect");
+            Toast.makeText(this, "Failed to connect: " + e, Toast.LENGTH_SHORT).show();
             e.printStackTrace();
         }
 
@@ -164,6 +167,7 @@ public class ConnectedActivity extends AppCompatActivity {
             e.printStackTrace();
         }
         if (ConnectedActivity.this.socket.connected()) {
+            Toast.makeText(ConnectedActivity.this, "Sending: " + lat + " : " + lng, Toast.LENGTH_SHORT).show();
             ConnectedActivity.this.socket.emit("locationdata", data);
         }
     }
@@ -213,4 +217,43 @@ public class ConnectedActivity extends AppCompatActivity {
             // Add other cases here if need be
         }
     }
+
+
+    // Make callback functions
+    private Emitter.Listener onConnect = new Emitter.Listener() {
+        @Override
+        public void call(final Object... args) {
+            ConnectedActivity.this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(ConnectedActivity.this, "Connected to " + serverName, Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+    };
+    private Emitter.Listener onDisconnect = new Emitter.Listener() {
+        @Override
+        public void call(final Object... args) {
+            ConnectedActivity.this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(ConnectedActivity.this, "Disconnected from " + serverName, Toast.LENGTH_SHORT).show();
+                    socket.disconnect();
+                }
+            });
+        }
+    };
+    private Emitter.Listener onConnectError = new Emitter.Listener() {
+        @Override
+        public void call(final Object... args) {
+            ConnectedActivity.this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(ConnectedActivity.this, "Connect Error", Toast.LENGTH_SHORT).show();
+                    socket.disconnect();
+                    finish();
+                }
+            });
+        }
+    };
 }
