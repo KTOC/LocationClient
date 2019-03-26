@@ -9,4 +9,7 @@
     <string name="start_transfer">Start sending location data</string>
     <string name="enter_address">http://IP or Hostname</string>
     <string name="enter_port">Port number</string>
+    <string name="homepage_bg">Homepage bg</string>
+    <string name="title_bar">title picture</string>
+    <string name="connect_bg">connect bg picture</string>
 </resources>

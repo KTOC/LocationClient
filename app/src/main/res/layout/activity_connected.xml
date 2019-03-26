@@ -1,36 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center"
+    tools:context="work.koumakan.locationclient.ConnectedActivity">
 
-    <TextView
-        android:id="@+id/connected_user"
+    <include layout="@layout/toolbar_main" android:id="@+id/toolbar" />
+
+    <ImageView
+        android:id="@+id/connect_bgimage"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:contentDescription="@string/connect_bg"
+        android:scaleType="centerCrop"
+        android:src="@drawable/connect_bg" />
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
-        android:layout_height="100sp"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="133dp"
-        android:textSize="50sp"/>
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
-    <Button
-        android:id="@+id/disconnect"
-        android:layout_width="190dp"
-        android:layout_height="65dp"
-        android:layout_below="@+id/connected_user"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginStart="194dp"
-        android:layout_marginTop="7dp"
-        android:layout_marginEnd="0dp"
-        android:text="@string/disconnect_label" />
+        <ImageView
+            android:id="@+id/title_image"
+            android:layout_width="match_parent"
+            android:layout_height="155dp"
+            android:layout_marginTop="85dp"
+            android:contentDescription="@string/title_bar"
+            android:src="@drawable/titlebar" />
 
-    <Button
-        android:id="@+id/startsendlocation"
-        android:layout_width="194dp"
-        android:layout_height="63dp"
-        android:layout_below="@+id/connected_user"
-        android:layout_alignParentStart="true"
-        android:layout_marginStart="0dp"
-        android:layout_marginTop="7dp"
-        android:text="@string/start_transfer" />
-</RelativeLayout>
+        <TextView
+            android:id="@+id/connected_user"
+            android:layout_width="match_parent"
+            android:layout_height="100sp"
+            android:layout_marginTop="40dp"
+            android:textSize="50sp"/>
+
+        <Button
+            android:id="@+id/startsendlocation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:layout_marginStart="15dp"
+            android:layout_marginEnd="15dp"
+            android:text="@string/start_transfer" />
+
+        <Button
+            android:id="@+id/disconnect"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="15dp"
+            android:layout_marginEnd="15dp"
+            android:text="@string/disconnect_label" />
+
+    </LinearLayout>
+</FrameLayout>
